@@ -17,13 +17,13 @@ To install and run the server, follow these steps:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/simple-c-web-server.git
+   git clone https://github.com/AdaiasMagdiel/windows-c-http-server.git
    ```
 
 2. Navigate to the project directory:
 
    ```bash
-   cd simple-c-web-server
+   cd windows-c-http-server
    ```
 
 3. Build the project using `Makefile`:
