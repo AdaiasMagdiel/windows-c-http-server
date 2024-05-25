@@ -6,5 +6,6 @@
 #include <string.h>
 
 char* getHTML(const char *filepath);
+char* getResponse(char *filepath);
 
 #endif  // MAG_CONTENT

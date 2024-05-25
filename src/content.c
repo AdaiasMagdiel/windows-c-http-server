@@ -46,3 +46,7 @@ char* getHTML(const char *filepath) {
 
     return data;
 }
+
+char* getResponse(char *filepath) {
+    return getHTML(filepath);
+}
