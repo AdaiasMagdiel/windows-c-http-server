@@ -11,7 +11,7 @@ void initSocket();
 void stopServer(SOCKET socketfd);
 SOCKET createServer(char *host, int port);
 SOCKET getConnection(SOCKET socketfd);
-void sendData(SOCKET connectionfd, char *data);
+int sendData(SOCKET connectionfd, char *data);
 char *notFound404();
 
 #endif //MAG_SERVER

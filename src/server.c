@@ -77,11 +77,9 @@ SOCKET getConnection(SOCKET socketfd) {
 	return connectionfd;
 }
 
-void sendData(SOCKET connectionfd, char *data) {
-	int res = -1;
-
-	res = send(connectionfd, data, (int)strlen(data), 0);
-    if (res == SOCKET_ERROR) {
+int sendData(SOCKET connectionfd, char *data) {
+	int bytes = send(connectionfd, data, (int)strlen(data), 0);
+    if (bytes == SOCKET_ERROR) {
         printf("Error: Send failed with error: %d\n", WSAGetLastError());
 
         closesocket(connectionfd);
@@ -89,11 +87,10 @@ void sendData(SOCKET connectionfd, char *data) {
 
         exit(1);
     }
-    printf("Bytes Sent: %d\n", res);
 
     // shutdown the connection since no more data will be sent
-    res = shutdown(connectionfd, SD_SEND);
-    if (res == SOCKET_ERROR) {
+    int shutdownRes = shutdown(connectionfd, SD_SEND);
+    if (shutdownRes == SOCKET_ERROR) {
         wprintf(L"Error: Shutdown failed with error: %d\n", WSAGetLastError());
 
         closesocket(connectionfd);
@@ -101,6 +98,8 @@ void sendData(SOCKET connectionfd, char *data) {
 
         exit(1);
     }
+
+    return bytes;
 }
 
 char *notFound404() {
