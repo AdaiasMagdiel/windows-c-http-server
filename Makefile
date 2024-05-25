@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra
 LIBS = -lwsock32 -lws2_32
 INPUT = main.c
-FILES = ./src/server.c ./src/content.c
+FILES = ./src/server.c ./src/content.c ./src/request.c
 OUTPUT = main.exe
 
 $(OUTPUT): $(INPUT) $(FILES)
