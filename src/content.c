@@ -1,12 +1,14 @@
 #include "content.h"
 
+// TODO: Add a log 
+
 char* getHTML(const char *filepath) {
     const char *header = "HTTP/1.1 200 OK\r\nServer: Magotron2002\r\nContent-Type: text/html\r\n\r\n";
     size_t headerLen = strlen(header);
 
     FILE *fp = fopen(filepath, "rb");
     if (fp == NULL) {
-        fprintf(stderr, "Error: Unable to open file.\n");
+        // fprintf(stderr, "Error: Unable to open file.\n");
         return NULL;
     }
 
@@ -15,7 +17,7 @@ char* getHTML(const char *filepath) {
     fseek(fp, 0, SEEK_SET);
 
     if (fileSize < 0) {
-        fprintf(stderr, "Error: Unable to determine file size.\n");
+        // fprintf(stderr, "Error: Unable to determine file size.\n");
         fclose(fp);
         return NULL;
     }
@@ -23,7 +25,7 @@ char* getHTML(const char *filepath) {
     size_t totalSize = headerLen + (size_t)fileSize + 1;
     char *data = (char *)malloc(totalSize);
     if (data == NULL) {
-        fprintf(stderr, "Error: Unable to allocate memory.\n");
+        // fprintf(stderr, "Error: Unable to allocate memory.\n");
         fclose(fp);
         return NULL;
     }
@@ -32,7 +34,7 @@ char* getHTML(const char *filepath) {
 
     size_t bytesRead = fread(data + headerLen, 1, (size_t)fileSize, fp);
     if (bytesRead != (size_t)fileSize) {
-        fprintf(stderr, "Error: Unable to read file content (read %zu bytes, expected %zu bytes).\n", bytesRead, (size_t)fileSize);
+        // fprintf(stderr, "Error: Unable to read file content (read %zu bytes, expected %zu bytes).\n", bytesRead, (size_t)fileSize);
         free(data);
         fclose(fp);
         return NULL;
