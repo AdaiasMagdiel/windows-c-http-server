@@ -1,12 +1,12 @@
 # Simple C Web Server (Windows)
 
-This is a simple C web server designed specifically for Windows systems. It serves static HTML files to clients over HTTP and utilizes Windows-specific APIs.
+This is a simple and functional C web server designed specifically for Windows systems. It serves static HTML files to clients over HTTP and utilizes Windows-specific APIs.
 
 ## Prerequisites
 
 Before you begin, ensure you have met the following requirements:
 
-- You have a basic understanding of C programming language.
+- You have a basic understanding of the C programming language.
 - You have `gcc` installed on your Windows system.
 - You are running this on a Windows system.
 
@@ -51,7 +51,29 @@ The project consists of the following files:
 - `src/server.h`: Header file for server-related functions.
 - `src/content.c`: Implements functions for reading HTML files and generating appropriate HTTP responses.
 - `src/content.h`: Header file for content-related functions.
+- `src/request.c`: Implements functions for parsing HTTP requests.
+- `src/request.h`: Header file for request-related functions.
 - `Makefile`: Defines rules for building the project.
+
+## Features
+
+The web server supports the following functionalities:
+
+1. **Serve Static HTML Files**: 
+   - Serves files from the `./public` directory by default.
+   - Supports serving `index.html` for root requests.
+
+2. **HTTP Request Handling**:
+   - Parses HTTP GET requests to extract the method and path.
+
+3. **Dynamic Content Type Handling**:
+   - Determines the content type of requested files based on their extensions (e.g., `.html`, `.css`, `.js`).
+   - Defaults to `text/plain` for unknown file types.
+   - This approach is not the most efficient/optimal/recommended for this project, but it serves its purpose for now.
+
+4. **HTTP Response Generation**:
+   - Generates appropriate HTTP headers.
+   - Handles 404 Not Found responses for non-existent files.
 
 ## Running on Linux
 
