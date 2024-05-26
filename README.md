@@ -64,7 +64,7 @@ The web server supports the following functionalities:
    - Supports serving `index.html` for root requests.
 
 2. **HTTP Request Handling**:
-   - Parses HTTP GET requests to extract the method and path.
+   - Parses HTTP requests to extract the method and path.
 
 3. **Dynamic Content Type Handling**:
    - Determines the content type of requested files based on their extensions (e.g., `.html`, `.css`, `.js`).
