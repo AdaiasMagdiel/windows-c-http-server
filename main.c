@@ -6,8 +6,14 @@
 #include "src/request.h"
 
 
-int main() {
-    char file[512] = "./public";
+int main(int argc, char **argv) {
+
+	char *publicDir;
+	if (argc == 1) {
+    	publicDir = "./public";
+	} else {
+		publicDir = argv[1];
+	}
 
     char *hostAddress = "0.0.0.0";
     int portNumber = 3000;
@@ -20,33 +26,36 @@ int main() {
 
         REQUEST req = getRequest(clientSocket);
 
+        char publicFile[512];
+        strcpy(publicFile, publicDir);
+
 		if (strcmp(req.path, "/") == 0) {
-			strcat(file, "/index.html");
+			strcat(publicFile, "/index.html");
 		} else {
-			strcat(file, req.path);
+			strcat(publicFile, req.path);
 		}
 
 		// req.method   ---   req.path
-		printf("\x1b[37m%s\x1b[0m   ---   \x1b[37m%s\x1b[0m", req.method, req.path);
+		printf(
+			"\x1b[37m%s\x1b[0m   ---   \x1b[37m%s\x1b[0m",
+			req.method,                req.path
+		);
 
-        char *content = getResponse(file);
+        RESPONSE response = getResponse(publicFile);
         int bytes;
-        if (content == NULL) {
-        	// req.method   ---   req.path   ---   404
-        	printf("   ---   \x1b[31m404\x1b[0m");
 
-            bytes = sendData(clientSocket, notFound404());
-        } else {
-        	// req.method   ---   req.path   ---   200
-	        printf("   ---   \x1b[32m200\x1b[0m");
+        bytes = sendData(clientSocket, response.content);
 
-	        bytes = sendData(clientSocket, content);
+        // ---   Bytes: int
+        printf("   ---   Bytes: %d", bytes);
 
-	        free(content);
+        char *status = "\x1b[32m200\x1b[0m";
+        if (response.status == 404) {
+        	status = "\x1b[31m404\x1b[0m";
         }
+        printf("   ---   %s\n", status);
 
-        // req.method   ---   req.path   ---   int:status   ---   Bytes: int
-		printf("   ---   Bytes: %d\n", bytes);
+        free(response.content);
     }
     closesocket(clientSocket);
 
