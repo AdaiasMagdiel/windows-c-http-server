@@ -2,8 +2,6 @@
 #define MAG_SERVER
 
 #include <stdio.h>
-#include <WS2tcpip.h>
-#include <winsock.h>
 #include <winsock2.h>
 #include <string.h>
 
