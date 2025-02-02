@@ -1,8 +1,12 @@
 #include <stdio.h>
 #include <winsock2.h>
 
+#define MGDL_SB_IMPLEMENTATION
+#include "include/string_builder.h"
+
 #define PORT 2002
 #define MAX_CONNECTIONS 32
+#define BUFFER_SIZE 4096
 
 int initializeWinsock() {
   WSADATA wsaData;
@@ -80,6 +84,38 @@ void closeServer(SOCKET serverfd) {
   closesocket(serverfd);
 }
 
+void proccessResponse(StringBuilder *sb) {
+  printf("[Request]:\n%s\n", sb->data);
+
+  sb_free(sb);
+  sb_init(sb);
+
+  sb_append(sb, "HTTP/1.1 200 OK\r\n");
+  sb_append(sb, "Content-Type: text/plain\r\n");
+  sb_append(sb, "\r\n");
+  sb_append(sb, "pong\r\n");
+}
+
+void handleClient(SOCKET client) {
+  StringBuilder sb;
+  sb_init(&sb);
+  sb_ensure_capacity(&sb, BUFFER_SIZE);
+
+  int bytesReceived = recv(client, sb.data, BUFFER_SIZE, 0);
+  if (bytesReceived > 0) {
+    sb.data[bytesReceived] = '\0';
+
+    proccessResponse(&sb);
+
+    send(client, sb.data, sb.length, 0);
+    sb_free(&sb);
+  } else if (bytesReceived == 0) {
+    printf("Client disconnected.\n");
+  } else {
+    printf("[ERROR] recv failed: %d\n", WSAGetLastError());
+  }
+}
+
 int main() {
   if (initializeWinsock() != 0) {
     return 1;
@@ -100,16 +136,20 @@ int main() {
 
   printf("Server listening on http://localhost:%d...\n", PORT);
 
-  SOCKET client = acceptConnection(serverfd);
-  if (client == INVALID_SOCKET) {
-    closeServer(serverfd);
-    cleanupWinsock();
-    return 1;
+  while (1) {
+    SOCKET client = acceptConnection(serverfd);
+    if (client == INVALID_SOCKET) {
+      closeServer(serverfd);
+      cleanupWinsock();
+      return 1;
+    }
+
+    printf("Client connected.\n");
+    handleClient(client);
+
+    closeConnection(client);
   }
 
-  printf("Client connected.\n");
-
-  closeConnection(client);
   closeServer(serverfd);
   cleanupWinsock();
 
