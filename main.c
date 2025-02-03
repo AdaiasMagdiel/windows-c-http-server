@@ -84,16 +84,66 @@ void closeServer(SOCKET serverfd) {
   closesocket(serverfd);
 }
 
+void free_split(char **strings, size_t length) {
+  for (size_t i = 0; i < length; i++) {
+    free(strings[i]);
+  }
+  free(strings);
+}
+
 void proccessResponse(StringBuilder *sb) {
   printf("[Request]:\n%s\n", sb->data);
+
+  size_t length;
+  char **lines = sb_split(sb, " ", &length);
+
+  sb_free(sb);
+  sb_init(sb);
+  sb_append(sb, lines[1]);
+  sb_trim(sb, "/");
+  free_split(lines, length);
+
+  char path[sb->length + 1];
+  strcpy(path, sb->data);
+
+  StringBuilder body;
+  sb_init(&body);
 
   sb_free(sb);
   sb_init(sb);
 
+  if (sb_read_file(&body, path) == -1) {
+    sb_free(&body);
+    sb_init(&body);
+    sb_append(&body, "<h1>Not Found</h1>");
+
+    char buffer[8];
+    itoa(body.length, buffer, 10);
+
+    sb_append(sb, "HTTP/1.1 404 Not Found\r\n");
+    sb_append(sb, "Content-Type: text/html\r\n");
+    sb_append(sb, "Content-Length: ");
+    sb_append(sb, buffer);
+    sb_append(sb, "\r\n\r\n");
+    sb_append(sb, body.data);
+    sb_append(sb, "\r\n");
+    sb_free(&body);
+
+    return;
+  }
+
+  char buffer[8];
+  itoa(body.length, buffer, 10);
+
   sb_append(sb, "HTTP/1.1 200 OK\r\n");
   sb_append(sb, "Content-Type: text/plain\r\n");
+  sb_append(sb, "Content-Length: ");
+  sb_append(sb, buffer);
+  sb_append(sb, "\r\n\r\n");
+  sb_append(sb, body.data);
   sb_append(sb, "\r\n");
-  sb_append(sb, "pong\r\n");
+
+  sb_free(&body);
 }
 
 void handleClient(SOCKET client) {
